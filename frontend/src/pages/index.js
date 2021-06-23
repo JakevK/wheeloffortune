@@ -1,7 +1,15 @@
-import LandingPage from "./LandingPage";
-import JoinPage from "./JoinPage";
-import NewGamePage from "./NewGamePage";
-import RegisterPage from "./RegisterPage";
+import RegistrationPage from "./RegistrationPage";
+import SelectionPage from "./SelectionPage";
+import LobbyPage from "./LobbyPage";
+import ErrorPage from "./ErrorPage";
 import GamePage from "./GamePage";
 
-export { LandingPage, JoinPage, NewGamePage, RegisterPage, GamePage };
+const pages = {
+  registration: RegistrationPage,
+  selection: SelectionPage,
+  lobby: LobbyPage,
+  error: ErrorPage,
+  game: GamePage,
+};
+
+export default pages;

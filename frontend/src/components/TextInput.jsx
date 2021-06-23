@@ -9,7 +9,9 @@ const TextInput = ({ onSubmit, validation }) => {
     }
   };
   const submitText = () => {
-    const isValidInput = validation.every((rule) => rule(text));
+    const isValidInput = validation
+      ? validation.every((rule) => rule(text))
+      : true;
     if (isValidInput) {
       onSubmit(text);
     }
