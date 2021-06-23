@@ -1,3 +1,4 @@
+import os
 import asyncio
 import json
 import websockets
@@ -25,8 +26,8 @@ async def server(websocket, path, games, selecting_clients):
 
 start_server = websockets.serve(
     functools.partial(server, games=games, selecting_clients=selecting_clients),
-    "localhost",
-    5555,
+    os.environ["URL"],
+    int(os.environ["PORT"]),
 )
 
 asyncio.get_event_loop().run_until_complete(start_server)

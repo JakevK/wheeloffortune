@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { w3cwebsocket as W3CWebSocket } from "websocket";
 import pages from "./pages";
 
+//const socket = new W3CWebSocket("wss://jake-wof.herokuapp.com/");
 const socket = new W3CWebSocket("ws://127.0.0.1:5555");
 
 const App = () => {
