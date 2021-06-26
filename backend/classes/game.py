@@ -3,22 +3,47 @@ from .player import Player
 
 
 class Game:
-    def __init__(self, name, admin):
+    def __init__(self, name, admin, phrase_file):
         self.name = name
         self.admin = admin
+        self.phrase_file = phrase_file
         self.players = []
         self.begun = False
         self.turn = 0
+        self.turn_counter = 0
         self.phrase = ""
         self.guessed = []
         self.add_player(admin)
-        self.wheel_value = 0
+        self.wheel_position = 0
+        self.complete = False
+        self.prizes = [
+            500,
+            650,
+            900,
+            2500,
+            500,
+            900,
+            700,
+            650,
+            500,
+            700,
+            500,
+            600,
+            550,
+            600,
+            650,
+            950,
+        ]
 
     def __str__(self):
         return "Game:\n" + "\n".join([str(player) for player in self.players])
 
     def spin_wheel(self):
-        self.wheel_value = random.choice([1000, 800, 500, 100, 200])
+        self.wheel_position = random.randint(0, len(self.prizes) - 1)
+        self.turn_counter += 1
+
+    def wheel_value(self):
+        return self.prizes[self.wheel_position]
 
     def data(self):
         return {
@@ -26,12 +51,6 @@ class Game:
             "phrase": self.formatted_phrase(),
             "guessed": self.guessed,
         }
-
-    def lobby_data(self):
-        return {"players": {player.name: player.score for player in self.players}}
-
-    def summary(self):
-        return {"name": self.name, "size": len(self.players), "begun": self.begun}
 
     def current_player(self):
         return self.players[self.turn]
@@ -64,19 +83,28 @@ class Game:
             del games[self.name]
 
     def new_phrase(self):
-        self.phrase = "TURN AROUND AND SAY"
+        phrase_file = open(self.phrase_file)
+
+        # iterate through phrase storage file to get a random phrase
+        # using simplified "reservoir algorithm" (https://stackoverflow.com/a/3540315)
+        chosen_line = next(phrase_file)
+        for i, current_line in enumerate(phrase_file, 2):
+            # for each line determine whether to replace the chosen line or not
+            # based on decreasing probability as iteration continues
+            if random.randrange(i):
+                continue
+            chosen_line = current_line
+
+        # remove newline character and set phrase variable
+        self.phrase = chosen_line.split("\n")[0]
 
     def formatted_phrase(self):
-        return " ".join(
-            [
-                letter
-                if (
-                    letter in self.guessed or letter not in "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
-                )
-                else "_"
-                for letter in self.phrase
-            ]
-        )
+        return [
+            letter
+            if (letter in self.guessed or letter not in "ABCDEFGHIJKLMNOPQRSTUVWXYZ")
+            else None
+            for letter in self.phrase
+        ]
 
     def take_guess(self, guess):
         # TODO: validate(guess)
@@ -85,7 +113,7 @@ class Game:
         if set(
             [letter for letter in self.phrase if letter in "ABCDEFGHIJKLMNOPQRSTUVWXYZ"]
         ).issubset(self.guessed):
-            print("winnenr")
+            self.complete = True
         if not occurences:
             self.next_turn()
         return occurences
@@ -93,16 +121,20 @@ class Game:
     def next_turn(self):
         self.turn = (self.turn + 1) % len(self.players)
 
-    def shuffle_players(self):
+    def new_round(self):
         random.shuffle(self.players)
+        self.spin_wheel()
+        self.new_phrase()
+        self.guessed = []
+        self.turn = 0
+        self.complete = False
 
     def start(self):
         if len(self.players) < 3:
             raise Exception("At least 3 players are required to start a game")
-        self.shuffle_players()
-        self.spin_wheel()
-        self.turn = 0
+
         self.begun = True
-        self.new_phrase()
         for player in self.players:
             player.client.set_stage("game")
+
+        self.new_round()

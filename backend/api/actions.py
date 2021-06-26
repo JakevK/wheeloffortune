@@ -1,3 +1,4 @@
+import os
 import sys
 import inspect
 import json
@@ -43,11 +44,13 @@ async def send(event, client, data):
     await client.websocket.send(json.dumps(formatted_data))
 
 
-def games_list(games):
-    return [game.summary() for game in games.values()]
+async def serve_selection(selecting_clients, games):
+    def games_list(games):
+        return [
+            {"name": game.name, "size": len(game.players), "begun": game.begun}
+            for game in games.values()
+        ]
 
-
-async def selection_send(selecting_clients, games):
     await asyncio.gather(
         *[
             send("selection", client, {"games": games_list(games)})
@@ -57,7 +60,7 @@ async def selection_send(selecting_clients, games):
 
 
 async def serve_lobby(client):
-    def lobby(client):
+    def send_lobby(client):
         lobby_data = {
             "game": client.game.name,
             "players": {
@@ -71,59 +74,7 @@ async def serve_lobby(client):
         }
         return send("lobby", client, lobby_data)
 
-    await asyncio.gather(*[lobby(player.client) for player in client.game.players])
-
-
-@action("register")
-@limit_stage("registration")
-async def register(request_data, client, games, selecting_clients):
-    if client.player:
-        raise Exception("player already registered")
-    player_name = request_data["name"]
-    client.player = Player(player_name, client)
-    selecting_clients.append(client)
-    await send("selection", client, {"games": games_list(games)})
-    client.set_stage("selection")
-
-
-@action("unregister")
-async def unregister(client, selecting_clients, games):
-    if client.game:
-        client.game.remove_player(client.player, games)
-        await selection_send(selecting_clients, games)
-    if client in selecting_clients:
-        selecting_clients.remove(client)
-
-
-@action("create game")
-@limit_stage("selection")
-async def create_game(request_data, client, games, selecting_clients):
-    game_name = request_data["name"]
-
-    if game_name in games:
-        raise Exception(f"game already exists: {game_name}")
-
-    games[game_name] = Game(game_name, client.player)
-    selecting_clients.remove(client)
-    await selection_send(selecting_clients, games)
-    client.set_stage("lobby")
-    await serve_lobby(client)
-
-
-@action("join game")
-@limit_stage("selection")
-async def join_game(request_data, client, games, selecting_clients):
-    game_name = request_data["name"]
-
-    if game_name not in games:
-        raise Exception(f"game does not exist: {game_name}")
-
-    games[game_name].add_player(client.player)
-    selecting_clients.remove(client)
-    client.set_stage("lobby")
-    await selection_send(selecting_clients, games)
-    client.set_stage("lobby")
-    await serve_lobby(client)
+    await asyncio.gather(*[send_lobby(player.client) for player in client.game.players])
 
 
 async def serve_game(game):
@@ -140,15 +91,79 @@ async def serve_game(game):
                 for curr_player in game.players
             ],
             "self": {"name": player.name, "score": player.score},
-            "is_own_turn": player == game.players[game.turn],
+            "is_own_turn": player == game.current_player(),
             "turn": game.turn,
             "phrase": game.formatted_phrase(),
             "guessed": game.guessed,
-            "wheel_value": game.wheel_value,
+            "complete": game.complete,
+            "is_admin": (player == game.admin),
+            "possible_wheel_values": game.prizes,
+            "wheel_position": game.wheel_position,
+            "turn_counter": game.turn_counter,
         }
         await send("game", player.client, game_data)
 
     await asyncio.gather(*[send_game(player) for player in game.players])
+
+
+@action("register")
+@limit_stage("registration")
+async def register(request_data, client, games, selecting_clients):
+    if client.player:
+        raise Exception("player already registered")
+
+    player_name = request_data["name"]
+    client.player = Player(player_name, client)
+    selecting_clients.append(client)
+    client.set_stage("selection")
+
+    await serve_selection([client], games)
+
+
+@action("unregister")
+async def unregister(client, selecting_clients, games):
+    if client.game:
+        client.game.remove_player(client.player, games)
+        await serve_selection(selecting_clients, games)
+        if client.stage == "game":
+            await serve_game(client.game)
+    if client in selecting_clients:
+        selecting_clients.remove(client)
+
+
+@action("create game")
+@limit_stage("selection")
+async def create_game(request_data, client, games, selecting_clients):
+    game_name = request_data["name"]
+
+    if game_name in games:
+        raise Exception(f"game already exists: {game_name}")
+
+    api_dir = os.path.dirname(os.path.realpath(__file__))
+    phrase_file = os.path.join(api_dir, "phrases.txt")
+
+    games[game_name] = Game(game_name, client.player, phrase_file)
+
+    selecting_clients.remove(client)
+    await serve_selection(selecting_clients, games)
+    client.set_stage("lobby")
+    await serve_lobby(client)
+
+
+@action("join game")
+@limit_stage("selection")
+async def join_game(request_data, client, games, selecting_clients):
+    game_name = request_data["name"]
+
+    if game_name not in games:
+        raise Exception(f"game does not exist: {game_name}")
+
+    games[game_name].add_player(client.player)
+    selecting_clients.remove(client)
+    client.set_stage("lobby")
+    await serve_selection(selecting_clients, games)
+    client.set_stage("lobby")
+    await serve_lobby(client)
 
 
 @action("start game")
@@ -175,8 +190,18 @@ async def take_guess(client, request_data):
 
     guess = request_data["guess"]
 
-    player.award(game.wheel_value * game.take_guess(guess))
+    player.award(game.wheel_value() * game.take_guess(guess))
 
     game.spin_wheel()
 
     await serve_game(game)
+
+
+@action("next round")
+@limit_stage("game")
+async def next_round(client):
+    if client.player != client.game.admin:
+        raise "only the admin can start a new round"
+
+    client.game.new_round()
+    await serve_game(client.game)

@@ -24,6 +24,8 @@ async def server(websocket, path, games, selecting_clients):
         await api.actions.unregister(client, selecting_clients, games)
 
 
+print(f"server running on {os.environ['URL']}, port {os.environ['PORT']}")
+
 start_server = websockets.serve(
     functools.partial(server, games=games, selecting_clients=selecting_clients),
     os.environ["URL"],

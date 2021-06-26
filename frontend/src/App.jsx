@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { w3cwebsocket as W3CWebSocket } from "websocket";
 import pages from "./pages";
+import { ThemeContext, theme } from "./ThemeContext";
 
 //const socket = new W3CWebSocket("wss://jake-wof.herokuapp.com/");
 const socket = new W3CWebSocket("ws://127.0.0.1:5555");
@@ -30,7 +31,11 @@ const App = () => {
 
   const Page = data.event in pages ? pages[data.event] : pages.error;
 
-  return <Page send={send} data={data.data} />;
+  return (
+    <ThemeContext.Provider value={theme}>
+      <Page send={send} data={data.data} />
+    </ThemeContext.Provider>
+  );
 };
 
 export default App;
