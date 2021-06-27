@@ -2,8 +2,11 @@ import { useContext } from "react";
 import { ThemeContext } from "../ThemeContext";
 import { Heading, Card } from "../components";
 
+// returns a nice looking graphical representation of a given list of players
 const PlayerList = ({ players, turn, width = 300 }) => {
+  // use app theme
   const theme = useContext(ThemeContext);
+
   return (
     <Card
       style={{
@@ -24,6 +27,7 @@ const PlayerList = ({ players, turn, width = 300 }) => {
           gap: "10px",
         }}
       >
+        {/* iterate through players and return relevant information for each */}
         {players.map((player, i) => (
           <div
             key={i}

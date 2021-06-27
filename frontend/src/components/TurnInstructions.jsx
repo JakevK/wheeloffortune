@@ -1,4 +1,6 @@
 import { Heading } from "../components";
+
+// return nicely formatted instructions to the player given a turn object
 const TurnInstructions = ({ turn }) => (
   <div
     style={{

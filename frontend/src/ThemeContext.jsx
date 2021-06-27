@@ -1,5 +1,6 @@
 import { createContext } from "react";
 
+// theme rules used for styling throughout the app
 export const theme = {
   background: "#e0e0e0",
   shadowLight: "#ffffff",
@@ -16,4 +17,6 @@ export const theme = {
     "#89608e",
   ],
 };
+
+// export the theme as a context
 export const ThemeContext = createContext();

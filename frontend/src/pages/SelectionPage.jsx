@@ -1,5 +1,8 @@
 import { TextInput, Form, Heading, Button } from "../components";
 
+// page where the user can submit a name to create a new game
+// or select from a list of existing games to join one of them
+// - self explanatory, with some extra inline styling
 const SelectionPage = ({ send, data }) => (
   <div
     style={{
@@ -16,7 +19,11 @@ const SelectionPage = ({ send, data }) => (
       <Heading>create a game</Heading>
       <TextInput
         placeholder="game name"
-        onSubmit={(gameName) => send("create game", { name: gameName })}
+        onSubmit={
+          /* send the game name to the server to create the game */ (
+            gameName
+          ) => send("create game", { name: gameName })
+        }
       />
     </Form>
     <Form>
@@ -32,13 +39,18 @@ const SelectionPage = ({ send, data }) => (
           margin: "0 auto",
         }}
       >
+        {/* iterate though games and display a clickable summary */}
         {data.games.map((game) => (
           <Button
             height={35}
             key={game.name}
-            onClick={() => send("join game", { name: game.name })}
+            onClick={
+              /* send the game name to the server to join the game */ () =>
+                send("join game", { name: game.name })
+            }
           >
             <span style={{ fontWeight: "bold" }}>{game.name}</span> -{" "}
+            {/* gotta have that good grammar */}
             {game.size} player{game.size !== 1 && "s"}
             {game.begun && <div>in progress</div>}
           </Button>

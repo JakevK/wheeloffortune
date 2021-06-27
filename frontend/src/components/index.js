@@ -1,3 +1,4 @@
+// collect all components from within components directory
 import TextInput from "./TextInput";
 import Button from "./Button";
 import Form from "./Form";
@@ -10,6 +11,7 @@ import LeaderBoard from "./LeaderBoard";
 import Card from "./Card";
 import TurnInstructions from "./TurnInstructions";
 
+// export them for simple imports
 export {
   TextInput,
   Form,

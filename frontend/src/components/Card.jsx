@@ -1,8 +1,10 @@
 import { useContext } from "react";
 import { ThemeContext } from "../ThemeContext";
 
+// rectangular ui element with neumorphic styling which matches the app's theme
 const Card = ({ style, children }) => {
   const theme = useContext(ThemeContext);
+
   return (
     <div
       style={{

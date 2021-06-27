@@ -1,6 +1,7 @@
 import { useState, useContext } from "react";
 import { ThemeContext } from "../ThemeContext";
 
+// like a normal button but with styling which matches the app theme
 const Button = ({
   onClick,
   height = 30,
@@ -10,10 +11,12 @@ const Button = ({
 }) => {
   const theme = useContext(ThemeContext);
 
+  // is the button currently being clicked (bool)
   const [clicked, setClicked] = useState(false);
 
   const shadowSize = height / 6;
 
+  // determine whether to render the button as depressed or not
   depressed = clicked || depressed;
 
   return (

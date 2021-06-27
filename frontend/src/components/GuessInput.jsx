@@ -1,4 +1,8 @@
 import { Button, TextInput } from "../components";
+
+// interface for taking an input of either a single letter using an array of
+// buttons, or a whole phrase using a text input
+// - runs the onGuess parameter function on the input
 const GuessInput = ({ onGuess, guessed, enabled }) => {
   return (
     <div>
@@ -13,6 +17,8 @@ const GuessInput = ({ onGuess, guessed, enabled }) => {
           gap: "10px",
         }}
       >
+        {/* single letter inputs:
+            map each letter of the alphabet to a button */}
         {"ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("").map((letter) => {
           const alreadyGuessed = guessed.includes(letter);
           return (
@@ -35,6 +41,7 @@ const GuessInput = ({ onGuess, guessed, enabled }) => {
           marginBottom: "30px",
         }}
       >
+        {/* input for whole phrase */}
         <TextInput
           placeholder="guess the whole phrase"
           onSubmit={(phrase) => onGuess(phrase)}
@@ -43,4 +50,5 @@ const GuessInput = ({ onGuess, guessed, enabled }) => {
     </div>
   );
 };
+
 export default GuessInput;

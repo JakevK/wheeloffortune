@@ -1,3 +1,4 @@
+// text ui component which styles children with a large, bold, centered font
 const Heading = ({ children }) => (
   <div
     style={{
@@ -9,4 +10,5 @@ const Heading = ({ children }) => (
     {children}
   </div>
 );
+
 export default Heading;

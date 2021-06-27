@@ -1,5 +1,7 @@
 import { TextInput, Heading, Form } from "../components";
 
+// page for entering a user name and registering to be able to play
+// renders some self explanatory components with some extra inline styling
 const RegistrationPage = ({ send }) => (
   <div
     style={{
@@ -13,7 +15,10 @@ const RegistrationPage = ({ send }) => (
       <Heading>register</Heading>
       <TextInput
         placeholder="your name"
-        onSubmit={(name) => send("register", { name: name })}
+        onSubmit={
+          /* communicate with the server to register user */ (name) =>
+            send("register", { name: name })
+        }
       />
     </Form>
   </div>

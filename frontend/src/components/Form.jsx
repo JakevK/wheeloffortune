@@ -1,6 +1,8 @@
 import { useContext } from "react";
 import { ThemeContext } from "../ThemeContext";
 
+// ui container with neumorphic styling and large spacing between its elements
+// uses theme context to stay consistent with app theme
 const Form = ({ children }) => {
   const theme = useContext(ThemeContext);
   return (

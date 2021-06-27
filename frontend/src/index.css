@@ -1,6 +1,8 @@
+/* google font imports */
 @import url('https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@700&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Arimo&display=swap');
 
+/* some default styles */
 body {
   padding: 0;
   margin: 0;
@@ -8,6 +10,8 @@ body {
   font-family: Arimo;
 }
 
+/* can't do this with react inline styles so it's here i guess */
+/* animate elements when they are rendered */
 @keyframes fade-in {
   0% {color: #17b890; opacity: 0}
   50% {color: #17b890; opacity: 1}

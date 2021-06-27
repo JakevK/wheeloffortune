@@ -10,12 +10,15 @@ import {
   Form,
 } from "../components";
 
+// the page for playing the game
 const GamePage = ({ send, data }) => {
+  // allow the user to guess something
   const makeGuess = (guess) => {
     send("guess", { guess: guess });
   };
 
   if (data.complete)
+    // the round has finished - show a leaderboard
     return (
       <div
         style={{
@@ -42,10 +45,13 @@ const GamePage = ({ send, data }) => {
       </div>
     );
 
+  // ui sizing determined here for developer convenience
   const wheelSize = 400;
   const phraseSize = 800;
   const spacing = 50;
 
+  // render the actual game with inputs for making a guess and all that
+  // kinda explains itself, with a little bit of extra inline styling
   return (
     <div>
       {" "}

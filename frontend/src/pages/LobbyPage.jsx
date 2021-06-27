@@ -1,9 +1,14 @@
 import { useContext } from "react";
 import { Heading, Form, Button } from "../components";
 import { ThemeContext } from "../ThemeContext";
+
+// the page the user sees when they are waiting for their game to start
 const LobbyPage = ({ send, data }) => {
+  // styling consistency
   const theme = useContext(ThemeContext);
 
+  // render all the different pieces, with some additional styling
+  // explains itself
   return (
     <div
       style={{
@@ -23,6 +28,7 @@ const LobbyPage = ({ send, data }) => {
               marginBottom: "20px",
             }}
           >
+            {/* have good grammar :) */}
             {data.players.length} player{data.players.length !== 1 && "s"}
           </div>
           {data.players.map((player, i) => (
@@ -37,6 +43,7 @@ const LobbyPage = ({ send, data }) => {
             </div>
           ))}
         </div>
+        {/* show start control only if player is admin */}
         {data.is_admin ? (
           <div>
             {data.players.length >= 3 ? (
