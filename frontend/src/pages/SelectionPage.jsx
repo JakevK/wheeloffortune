@@ -1,25 +1,50 @@
-import { TextInput } from "../components";
+import { TextInput, Form, Heading, Button } from "../components";
 
 const SelectionPage = ({ send, data }) => (
-  <div>
-    <p>create a new game:</p>
-    <TextInput
-      onSubmit={(gameName) => send("create game", { name: gameName })}
-    />
-    <p>or join an existing game:</p>
-    {data.games.map((game) => (
-      <button
-        style={{ cursor: "pointer", border: "1px solid grey" }}
-        key={game.name}
-        onClick={() => send("join game", { name: game.name })}
+  <div
+    style={{
+      display: "flex",
+      flexWrap: "wrap",
+      justifyContent: "center",
+      gap: "100px",
+      width: "1100px",
+      maxWidth: "90vw",
+      margin: "100px auto",
+    }}
+  >
+    <Form>
+      <Heading>create a game</Heading>
+      <TextInput
+        placeholder="game name"
+        onSubmit={(gameName) => send("create game", { name: gameName })}
+      />
+    </Form>
+    <Form>
+      <Heading>join a game</Heading>
+      <div
+        style={{
+          display: "flex",
+          flexWrap: "wrap",
+          justifyContent: "center",
+          gap: "20px",
+          textAlign: "center",
+          width: "90%",
+          margin: "0 auto",
+        }}
       >
-        <div>{game.name}</div>
-        <div>
-          {game.size} player{game.size !== 1 && "s"}
-        </div>
-        {game.begun && <div>in progress</div>}
-      </button>
-    ))}
+        {data.games.map((game) => (
+          <Button
+            height={35}
+            key={game.name}
+            onClick={() => send("join game", { name: game.name })}
+          >
+            <span style={{ fontWeight: "bold" }}>{game.name}</span> -{" "}
+            {game.size} player{game.size !== 1 && "s"}
+            {game.begun && <div>in progress</div>}
+          </Button>
+        ))}
+      </div>
+    </Form>
   </div>
 );
 

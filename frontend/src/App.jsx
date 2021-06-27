@@ -33,7 +33,9 @@ const App = () => {
 
   return (
     <ThemeContext.Provider value={theme}>
-      <Page send={send} data={data.data} />
+      <div style={{ color: theme.foreground }}>
+        <Page send={send} data={data.data} />
+      </div>
     </ThemeContext.Provider>
   );
 };

@@ -1,9 +1,21 @@
-import { TextInput } from "../components";
+import { TextInput, Heading, Form } from "../components";
 
 const RegistrationPage = ({ send }) => (
-  <div>
-    <p>register</p>
-    <TextInput onSubmit={(name) => send("register", { name: name })} />
+  <div
+    style={{
+      position: "absolute",
+      margin: "100px auto",
+      left: "50%",
+      transform: " TranslateX(-50%)",
+    }}
+  >
+    <Form>
+      <Heading>register</Heading>
+      <TextInput
+        placeholder="your name"
+        onSubmit={(name) => send("register", { name: name })}
+      />
+    </Form>
   </div>
 );
 

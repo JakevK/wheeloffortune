@@ -1,9 +1,42 @@
-const PlayerList = ({ players, turn }) =>
-  players.map((player, i) => (
-    <div key={i}>
-      <div style={i === turn ? { color: "blue" } : {}}>{player.name}</div>
-      <div>score: {player.score}</div>
-    </div>
-  ));
+import { useContext } from "react";
+import { ThemeContext } from "../ThemeContext";
+import { Heading, Card } from "../components";
+
+const PlayerList = ({ players, turn, width = 300 }) => {
+  const theme = useContext(ThemeContext);
+  return (
+    <Card
+      style={{
+        width: `${width}px`,
+        display: "flex",
+        gap: "30px",
+        flexDirection: "column",
+        paddingTop: "30px",
+      }}
+    >
+      <Heading>players</Heading>
+      <div
+        style={{
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+          marginBottom: "40px",
+          gap: "10px",
+        }}
+      >
+        {players.map((player, i) => (
+          <div
+            key={i}
+            style={player.is_self ? { color: theme.highlights[0] } : {}}
+          >
+            {i === turn && <span style={{}}>▸</span>}
+            <span style={{ fontWeight: "bold" }}> {player.name}</span> - $
+            {player.score.toLocaleString()}
+          </div>
+        ))}
+      </div>
+    </Card>
+  );
+};
 
 export default PlayerList;

@@ -1,15 +1,19 @@
+import { Form, Heading } from "../components";
 const LeaderBoard = ({ players }) => {
   const rankings = players.sort((a, b) => b.score - a.score);
   const listOfRankings = rankings.map((player, i) => (
-    <li key={i}>
-      {player.name} - {player.score.toLocaleString()}
-    </li>
+    <div key={i}>
+      {i + 1}. <span style={{ fontWeight: "bold" }}>{player.name}</span> -{" $"}
+      {player.score.toLocaleString()}
+    </div>
   ));
 
   return (
-    <div>
-      <div>current standings:</div>
-      <ol>{listOfRankings}</ol>
+    <div style={{ display: "flex", flexDirection: "column", gap: "30px" }}>
+      <Heading>current standings</Heading>
+      <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
+        {listOfRankings}
+      </div>
     </div>
   );
 };
