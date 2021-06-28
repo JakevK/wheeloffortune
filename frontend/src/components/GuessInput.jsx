@@ -43,6 +43,14 @@ const GuessInput = ({ onGuess, guessed, enabled }) => {
       >
         {/* input for whole phrase */}
         <TextInput
+          validation={[
+            (guess) =>
+              guess ? false : "actually enter something if you want to guess",
+            (guess) =>
+              guess.length <= 56
+                ? false
+                : "that guess was too long - try something shorter",
+          ]}
           placeholder="guess the whole phrase"
           onSubmit={(phrase) => onGuess(phrase)}
         />

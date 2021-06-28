@@ -19,6 +19,13 @@ const SelectionPage = ({ send, data }) => (
       <Heading>create a game</Heading>
       <TextInput
         placeholder="game name"
+        validation={[
+          (name) => (name ? false : "please enter a game name"),
+          (name) =>
+            name.length <= 20
+              ? false
+              : "the game name can't be longer than 20 characters",
+        ]}
         onSubmit={
           /* send the game name to the server to create the game */ (
             gameName

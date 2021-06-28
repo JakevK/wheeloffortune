@@ -46,12 +46,12 @@ const LobbyPage = ({ send, data }) => {
         {/* show start control only if player is admin */}
         {data.is_admin ? (
           <div>
-            {data.players.length >= 3 ? (
+            {data.players.length >= 2 ? (
               <Button height={40} onClick={() => send("start game", {})}>
                 start game
               </Button>
             ) : (
-              "you need at least 3 players to start the game"
+              "you need at least 2 players to start the game"
             )}
           </div>
         ) : (

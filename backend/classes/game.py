@@ -37,7 +37,8 @@ class Game:
             950,
         ]
 
-    def __str__(self):  # gotta have one of these bad boys for debugging
+    def __str__(self):
+        """gotta have one of these bad boys for debugging"""
         return "Game:\n" + "\n".join([str(player) for player in self.players])
 
     def spin_wheel(self):
@@ -168,8 +169,8 @@ class Game:
 
     def start(self):
         """start the game for the first time! - how exciting"""
-        if len(self.players) < 3:  # can't start a game with less than 3 players
-            raise Exception("At least 3 players are required to start a game")
+        if len(self.players) < 2:  # can't start a game with less than 3 players
+            raise Exception("At least 2 players are required to start a game")
 
         # actually start the thing and update the stage of each client
         self.begun = True

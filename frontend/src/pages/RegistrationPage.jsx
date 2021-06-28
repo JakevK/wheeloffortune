@@ -14,6 +14,13 @@ const RegistrationPage = ({ send }) => (
     <Form>
       <Heading>register</Heading>
       <TextInput
+        validation={[
+          (name) => (name ? false : "please enter a name"),
+          (name) =>
+            name.length <= 20
+              ? false
+              : "your name must not be longer than 20 characters",
+        ]}
         placeholder="your name"
         onSubmit={
           /* communicate with the server to register user */ (name) =>
