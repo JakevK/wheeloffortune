@@ -7,16 +7,17 @@ import { ThemeContext, theme } from "./ThemeContext";
 const socket = new W3CWebSocket("wss://jake-wof.herokuapp.com/");
 
 // initialize websocket client
-//const socket = new W3CWebSocket("ws://127.0.0.1:5555");
+// const socket = new W3CWebSocket("ws://127.0.0.1:5555");
 
 const App = () => {
-  const [data, setData] = useState({ event: "registration" });
+  const [data, setData] = useState({ event: "loading" });
 
   useEffect(() => {
     // set up socket events
 
     socket.onopen = () => {
       console.log("connected");
+      setData({ event: "registration" });
     };
 
     socket.onclose = () => {
